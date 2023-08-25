@@ -1,10 +1,18 @@
-// `GET` to get all thoughts
+const router = require("express").Router();
 
-//  `GET` to get a single thought by its `_id`
+const {
+  getThoughts,
+  getSingleThought,
+  createThought,
+  updateThought,
+  removeThought,
+} = require("../../controllers/thoughtController");
 
-//  `POST` to create a new thought (don't forget to push the created thought's `_id` to the associated user's `thoughts` array field)\
+router.route("/").get(getThoughts).post(createThought);
+router
+  .route("/:id")
+  .get(getSingleThought)
+  .put(updateThought)
+  .delete(removeThought);
 
-
-// `PUT` to update a thought by its `_id`
-
-// `DELETE` to remove a thought by its `_id`
+module.exports = router;

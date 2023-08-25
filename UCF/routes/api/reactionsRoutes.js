@@ -1,3 +1,10 @@
-// `POST` to create a reaction stored in a single thought's `reactions` array field
+const router = require("express").Router();
 
-// `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
+const {
+  createReaction,
+  removeReaction,
+} = require("../../controllers/reactionsController");
+
+router.route("/").post(createReaction).delete(removeReaction);
+
+module.exports = router;
