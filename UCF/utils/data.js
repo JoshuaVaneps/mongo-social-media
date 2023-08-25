@@ -42,6 +42,17 @@ const getRandomUser = () => {
   return getRandomArr(usernames);
 };
 
+// const getRandomThought = (int) => {
+//   const thoughts = [];
+//   for (let i = 0; i < int; i++) {
+//     results.push({
+//       thoughtText: getRandomArr(thoughtTexts),
+//       username: getRandomArr(usernames),
+//     });
+//   }
+//   return thoughts;
+// };
+
 module.exports = {
   usernames,
   emails,

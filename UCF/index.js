@@ -21,25 +21,3 @@ db.once("open", () => {
     console.log(`API server for ${activity} running on port ${PORT}!`);
   });
 });
-
-const { User, Thought } = require("./models");
-// Find all friends idea
-app.get("/all-friends", async (req, res) => {
-  try {
-    // Using model in route to find all documents that are instances of that model
-    const result = await User.find({});
-    res.status(200).json(result);
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-// find all reactions idea
-app.get("/all-reactions", async (req, res) => {
-  try {
-    const result = await Thought.find({});
-    res.status(200).json(result);
-  } catch (err) {
-    res.status(500).json({ message: "internal server error" });
-  }
-});

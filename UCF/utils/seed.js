@@ -11,9 +11,7 @@ const {
 // Start the seeding runtime timer
 console.time("seeding");
 
-// Creates a connection to mongodb
 connection.once("open", async () => {
-  // Delete the collections if they exist
   let userCheck = await connection.db
     .listCollections({ name: "users" })
     .toArray();
@@ -28,5 +26,55 @@ connection.once("open", async () => {
     await connection.dropCollection("thoughts");
   }
 
-  const thoughtIds = [];
+  const newUsers = [];
+
+  for (let i = 0; i < usernames.length; i++) {
+    newUsers.push({
+      username: usernames[i],
+      email: emails[i],
+    });
+  }
+  const createdUsers = await User.insertMany(newUsers);
+
+  for (const user of createdUsers) {
+    const userThoughts = [];
+
+    for (let i = 0; i < 5; i++) {
+      const randomThought = getRandomThought();
+      const reactions = [];
+
+      for (let j = 0; j < 3; j++) {
+        const randomReactionUser = getRandomUser();
+        reactions.push({
+          reactionBody: getRandomReaction(),
+          username: randomReactionUser,
+        });
+      }
+
+      userThoughts.push({
+        thoughtText: randomThought,
+        username: user.username,
+        reactions: reactions,
+      });
+    }
+
+    for (const thoughtData of userThoughts) {
+      const newThought = new Thought({
+        thoughtText: thoughtData.thoughtText,
+        username: thoughtData.username,
+        reactions: thoughtData.reactions,
+        user: user._id,
+      });
+
+      await newThought.save();
+      user.thoughts.push(newThought._id);
+    }
+
+    await user.save();
+  }
+
+  console.timeEnd("seeding");
+  console.table(newUsers);
+  console.info("Seeding complete! 🌱");
+  process.exit(0);
 });

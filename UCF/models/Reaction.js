@@ -12,7 +12,7 @@ const reactionSchema = new Schema({
     minlength: 1,
   },
   username: {
-    type: string,
+    type: String,
     required: true,
   },
   createdAt: {

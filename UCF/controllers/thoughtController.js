@@ -45,19 +45,17 @@ module.exports = {
 
   async removeThought(req, res) {
     try {
-      const user = await User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $pull: { thought: { thoughtId: req.params.thoughtId } } },
-        { runValidators: true, new: true }
-      );
+      const thought = await Thought.findOne({
+        _id: req.params.thoughtId,
+      });
 
-      if (!user) {
+      if (!thought) {
         return res
           .status(404)
-          .json({ message: "No user found with that ID :(" });
+          .json({ message: "No thought found with that ID :(" });
       }
 
-      res.json(user);
+      res.json(thought);
     } catch (err) {
       res.status(500).json(err);
     }
