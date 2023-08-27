@@ -51,6 +51,7 @@ module.exports = {
           .json({ message: "Thought not found or no thought with this ID" });
       }
 
+      await updatedThought.save();
       res.json({ message: "Reaction removed from thought" });
     } catch (err) {
       console.error(err);
