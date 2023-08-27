@@ -1,4 +1,5 @@
 const { User, Thought } = require("../models");
+const { ObjectId } = require("mongoose").Types;
 
 const userCount = async () => {
   const numberOfUsers = await User.aggregate().count("userCount");
@@ -67,9 +68,13 @@ module.exports = {
   // Delete a User and remove there Thoughts
   async deleteUser(req, res) {
     try {
-      // Find the user to get their thoughts
-      const user = await User.findOne({ _id: req.params.userId });
-
+      let user;
+      // Check if the parameter is a valid ObjectId (user ID)
+      if (ObjectId.isValid(req.params.usernameOrId)) {
+        user = await User.findOne({ _id: req.params.usernameOrId });
+      } else {
+        user = await User.findOne({ username: req.params.usernameOrId });
+      }
       if (!user) {
         return res.status(404).json({ message: "No such user exists" });
       }

@@ -45,19 +45,18 @@ module.exports = {
 
   async removeThought(req, res) {
     try {
-      const thought = await Thought.findOne({
+      const thought = await Thought.deleteOne({
         _id: req.params.thoughtId,
       });
 
-      if (!thought) {
-        return res
-          .status(404)
-          .json({ message: "No thought found with that ID :(" });
+      if (thought.deletedCount === 0) {
+        return res.status(404).json({ message: "No thought found with that ID :(" });
       }
-
-      res.json(thought);
+  
+      res.json({ message: "Thought deleted" });
     } catch (err) {
-      res.status(500).json(err);
+      console.error(err);
+      res.status(500).json({ message: "An error occurred" });
     }
   },
 
