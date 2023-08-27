@@ -28,7 +28,7 @@ module.exports = {
       const dbThoughtData = await Thought.create(req.body);
       const user = await User.findOneAndUpdate(
         { _id: req.body.userId },
-        { $push: { thought: dbThoughtData._id } },
+        { $push: { thoughts: dbThoughtData._id } },
         { new: true }
       );
 
