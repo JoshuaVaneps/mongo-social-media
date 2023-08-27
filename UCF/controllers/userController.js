@@ -17,10 +17,15 @@ module.exports = {
   },
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId });
-
+      let user;
+      // Check if the parameter is a valid ObjectId (user ID)
+      if (ObjectId.isValid(req.params.userId)) {
+        user = await User.findOne({ _id: req.params.userId });
+      } else {
+        user = await User.findOne({ username: req.params.userId });
+      }
       if (!user) {
-        return res.status(404).json({ message: "No user with that ID" });
+        return res.status(404).json({ message: "No such user exists" });
       }
 
       res.json(user);
@@ -70,10 +75,10 @@ module.exports = {
     try {
       let user;
       // Check if the parameter is a valid ObjectId (user ID)
-      if (ObjectId.isValid(req.params.usernameOrId)) {
-        user = await User.findOne({ _id: req.params.usernameOrId });
+      if (ObjectId.isValid(req.params.userId)) {
+        user = await User.findOne({ _id: req.params.userId });
       } else {
-        user = await User.findOne({ username: req.params.usernameOrId });
+        user = await User.findOne({ username: req.params.userId });
       }
       if (!user) {
         return res.status(404).json({ message: "No such user exists" });
@@ -83,7 +88,7 @@ module.exports = {
       await Thought.deleteMany({ username: user.username });
 
       // Delete the user
-      await User.findOneAndRemove({ _id: req.params.userId });
+      await User.findOneAndRemove({ _id: user._id });
 
       res.json({
         message: `${user.username} and their thoughts successfully deleted`,

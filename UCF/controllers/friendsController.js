@@ -6,18 +6,30 @@ module.exports = {
     try {
       let user;
       // Check if the parameter is a valid ObjectId (user ID)
-      if (ObjectId.isValid(req.params.usernameOrId)) {
-        user = await User.findOne({ _id: req.params.usernameOrId });
+      if (ObjectId.isValid(req.params.userId)) {
+        user = await User.findOne({ _id: req.params.userId });
       } else {
-        user = await User.findOne({ username: req.params.usernameOrId });
+        user = await User.findOne({ username: req.params.userId });
       }
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
+      let friend;
       // Add the friend's _id to the user's friends array
-      user.friends.addToSet(req.body.friendId); // Assuming req.body.friendId contains the friend's _id
+      // Check if the parameter is a valid ObjectId (user ID)
+      if (ObjectId.isValid(req.params.friendId)) {
+        friend = await User.findOne({ _id: req.params.friendId });
+      } else {
+        friend = await User.findOne({ username: req.params.friendId });
+      }
+
+      if (!friend) {
+        return res.status(404).json({ message: "friend not found" });
+      }
+
+      user.friends.addToSet(friend._id); //pushing friend id into the array
       await user.save(); // Save the user with the updated friends array
 
       res.json({ message: "Friend created" });
@@ -28,33 +40,40 @@ module.exports = {
   },
   async removeFriend(req, res) {
     try {
-      // Find the user
       let user;
       // Check if the parameter is a valid ObjectId (user ID)
-      if (ObjectId.isValid(req.params.usernameOrId)) {
-        user = await User.findOne({ _id: req.params.usernameOrId });
+      if (ObjectId.isValid(req.params.userId)) {
+        user = await User.findOne({ _id: req.params.userId });
       } else {
-        user = await User.findOne({ username: req.params.usernameOrId });
-      }
-      if (!user) {
-        return res.status(404).json({ message: "No such user exists" });
+        user = await User.findOne({ username: req.params.userId });
       }
 
-      //   find the friend
-      const friend = await User.findOne({ _id: req.body.friendId });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      let friend;
+      // Add the friend's _id to the user's friends array
+      // Check if the parameter is a valid ObjectId (user ID)
+      if (ObjectId.isValid(req.params.friendId)) {
+        friend = await User.findOne({ _id: req.params.friendId });
+      } else {
+        friend = await User.findOne({ username: req.params.friendId });
+      }
+
       if (!friend) {
-        return res.status(404).json({ message: "No such friend exists" });
+        return res.status(404).json({ message: "friend not found" });
       }
 
       //   if friend is in users friend list remove it from friend list
-      const isFriend = user.friends.includes(req.body.friendId);
+      const isFriend = user.friends.includes(friend._id);
 
       if (!isFriend) {
         return res.status(404).json({ message: "no friend found" });
       } else if (isFriend) {
         await User.updateOne(
           { _id: user._id },
-          { $pull: { friends: req.body.friendId } }
+          { $pull: { friends: friend._id } }
         );
       }
 

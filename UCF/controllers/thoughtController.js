@@ -28,7 +28,7 @@ module.exports = {
       const dbThoughtData = await Thought.create(req.body);
       const user = await User.findOneAndUpdate(
         { _id: req.body.userId },
-        { $push: { thoughts: dbThoughtData._id } },
+        { $push: { thought: dbThoughtData._id } },
         { new: true }
       );
 
@@ -45,14 +45,24 @@ module.exports = {
 
   async removeThought(req, res) {
     try {
-      const thought = await Thought.deleteOne({
+      const thought = await Thought.findOneAndDelete({
         _id: req.params.thoughtId,
       });
 
-      if (thought.deletedCount === 0) {
-        return res.status(404).json({ message: "No thought found with that ID :(" });
+      if (!thought) {
+        return res
+          .status(404)
+          .json({ message: "No thought found with that ID :(" });
       }
-  
+
+      const user = await User.findOne({ username: thought.username });
+
+      if (user) {
+        // Remove the thought ID from the user's thoughts array
+        user.thoughts.pull(thought._id);
+        await user.save();
+      }
+
       res.json({ message: "Thought deleted" });
     } catch (err) {
       console.error(err);
