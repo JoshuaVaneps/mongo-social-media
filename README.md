@@ -40,6 +40,9 @@ Welcome to the Social Network Backend! This application serves as the foundation
 5. Manage friendships by adding friends through appropriate endpoints.
 6. React to thoughts using the provided reaction endpoints.
 
+Video Demonstration:
+[Video](https://drive.google.com/file/d/1I0Gjr87vCXg_YHAg_3K6OHytZTdEbWj3/view)
+
 ## API Routes
 
 - **POST /api/users/signup**: Sign up a new user.
@@ -64,7 +67,7 @@ Contributions are welcome! If you have improvements or new features to suggest, 
 ## Questions
 
 If you have any questions or need assistance, please feel free to reach out:
-- GitHub: [YourGitHubUsername](https://github.com/JoshuaVaneps)
+- GitHub: [JoshuVaneps](https://github.com/JoshuaVaneps)
 
 ## License
 
